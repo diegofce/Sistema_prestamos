@@ -474,7 +474,7 @@
 			$admin_usuario=mainModel::limpiar_cadena($_POST['usuario_admin']);
 
 			$admin_clave=mainModel::limpiar_cadena($_POST['clave_admin']);
-
+			
 			$tipo_cuenta=mainModel::limpiar_cadena($_POST['tipo_cuenta']);
 
 			/*== comprobar campos vacios ==*/
@@ -494,7 +494,7 @@
 				$alerta=[
 					"Alerta"=>"simple",
 					"Titulo"=>"Ocurrió un error inesperado",
-					"Texto"=>"El DNI no coincide con el formato solicitado",
+					"Texto"=>"la CC no coincide con el formato solicitado",
 					"Tipo"=>"error"
 				];
 				echo json_encode($alerta);
@@ -723,7 +723,7 @@
 
 			/*== Preparando datos para enviarlos al modelo ==*/
 			$datos_usuario_up=[
-				"DNI"=>$dni,
+				"Cc"=>$dni,
 				"Nombre"=>$nombre,
 				"Apellido"=>$apellido,
 				"Telefono"=>$telefono,
