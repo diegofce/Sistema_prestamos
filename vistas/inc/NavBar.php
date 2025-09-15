@@ -4,9 +4,7 @@
     </a>
     <a href="<?php echo SERVERURL."user-update/".$lc->encryption($_SESSION['id_spm'])."/"; ?>">
         <i class="fas fa-user-cog"></i>       
-    </a>>
-        <i class="fas fa-user-cog"></i>
-    </a>
+
     <a href="#" class="btn-exit-system">
         
         <i class="fas fa-power-off"></i>
