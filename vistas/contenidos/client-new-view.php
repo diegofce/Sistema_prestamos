@@ -22,7 +22,7 @@
 </div>
 
 <div class="container-fluid">
-	<form action="" class="form-neon" autocomplete="off">
+	<form class="form-neon FormularioAjax" action="<?php echo SERVERURL; ?>ajax/clienteAjax.php" method="POST" data-form="save" autocomplete="off">
 		<fieldset>
 			<legend><i class="fas fa-user"></i> &nbsp; Información básica</legend>
 			<div class="container-fluid">
@@ -51,16 +51,20 @@
 							<input type="text" pattern="[0-9()+]{8,20}" class="form-control" name="cliente_telefono_reg" id="cliente_telefono" maxlength="20">
 						</div>
 					</div>
+					<div class="col-12 col-md-4"> 
+						<div class="form-group"> <label for="cliente_direccion" class="bmd-label-floating">direccion</label> <input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{1,150}" class="form-control" name="cliente_direccion_reg" id="cliente_direccion" maxlength="150"> 
+						</div> 
+					</div>
 					<div class="col-12 col-md-4">
 						<div class="form-group">
-							<label for="cliente_direccion" class="bmd-label-floating">Ficha</label>
-							<input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{1,150}" class="form-control" name="cliente_direccion_reg" id="cliente_direccion" maxlength="150">
+							<label for="cliente_ficha" class="bmd-label-floating">Ficha</label>
+							<input type="text" pattern="[0-9-]{1,20}" class="form-control" name="cliente_ficha_reg" id="cliente_ficha" maxlength="150">
 						</div>
 					</div>
 					<div class="col-12 col-md-4">
 						<div class="form-group">
-							<label for="cliente_direccion" class="bmd-label-floating">Programa</label>
-							<input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{1,150}" class="form-control" name="cliente_direccion_reg" id="cliente_direccion" maxlength="150">
+							<label for="cliente_programa_academico" class="bmd-label-floating">Programa</label>
+							<input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{1,150}" class="form-control" name="cliente_programa_academico_reg" id="cliente_programa_academico" maxlength="150">
 						</div>
 					</div>
 				</div>
