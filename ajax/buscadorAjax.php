@@ -56,8 +56,39 @@
                 $_SESSION[$fecha_final]= $_POST['fecha_final'];
             
             }
+            //Eliminar busqueda
+            if(isset($_POST['eliminar_busqueda'])){
+                unset($_SESSION[$fecha_inicio]);
+                unset($_SESSION[$fecha_final]);
+            }
         }else{
+            $name_var="busqueda_".$modulo;
+            //Iniciar busqueda
+            if(isset($_POST['busqueda_inicial'])){
+                if ($_POST['busqueda_inicial']==""){
+                    $alerta=[
+                        "Alerta"=>"simple",
+                        "Titulo"=>"Ocurrido un error inesperado",
+                        "Texto"=>"Por favor ingrese un término de búsqueda",
+                        "Tipo"=>"error"
+                    ];
+                    echo json_encode($alerta);
+                    exit();
+                }
+                $_SESSION[$name_var]= $_POST['busqueda_inicial'];
+            }
+            //Eliminar busqueda
+            if(isset($_POST['eliminar_busqueda'])){
+                unset($_SESSION[$name_var]);
+            }
         }
+        // Redireccionar
+        $url=$data_url[$modulo];
+        $alerta=[
+            "Alerta"=>"redireccionar",
+            "URL"=>SERVERURL.$url."/"
+        ]; 
+        echo json_encode($alerta);
 
     }else{
         session_unset();
