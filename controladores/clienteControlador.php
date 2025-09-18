@@ -128,7 +128,7 @@
                 $alerta = [
                     "Alerta"=>"limpiar",
                     "Titulo"=>"Cliente registrado",
-                    "Texto"=>"Los datos del cliente se registraron con éxito",
+                    "Texto"=>"Los datos del estudiante se registraron con éxito",
                     "Tipo"=>"success"
                 ];
             }else{
@@ -143,7 +143,7 @@
             exit();
         }
 
-        		/*--------- Controlador paginar cliente ---------*/
+/*--------- Controlador paginar cliente ---------*/
 		public function paginador_cliente_controlador($pagina,$registros,$privilegio,$url,$busqueda){
 
 			$pagina=mainModel::limpiar_cadena($pagina);
@@ -264,5 +264,245 @@
 			return $tabla;
 		} /* Fin controlador */
 
+        /*--------- Eliminar ciente  controlador ----------*/
+        public static function eliminar_cliente_controlador(){
+            // Recuperar cliente
+            $id = mainModel::decryption($_POST['cliente_id_del']);
+            $id = mainModel::limpiar_cadena($id);
+
+            // comprobar cliente en bd
+            $check_cliente = mainModel::ejecutar_consulta_simple("SELECT cliente_id FROM cliente WHERE cliente_id='$id'");
+            if($check_cliente->rowCount()<=0){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrió un error inesperado",
+                    "Texto"=>"El estudiante que intenta eliminar no existe en el sistema",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            //Comprobar prestamos
+            $check_prestamo = mainModel::ejecutar_consulta_simple("SELECT cliente_id FROM prestamo WHERE cliente_id='$id' LIMIT 1");
+            if($check_prestamo->rowCount()>0){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrido un error inesperado",
+                    "Texto"=>"No se puede eliminar el estudiante, está asociado a un prestamo en el sistema",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            // comprobar privilegios
+            session_start(['name'=>'SPM']);
+            if($_SESSION['privilegio_spm']!=1){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrió un error inesperado",
+                    "Texto"=>"No tienes los permisos necesarios para eliminar este estudiante",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            // Eliminar cliente
+            $eliminar_cliente = clienteModelo::eliminar_cliente_modelo($id);
+            if($eliminar_cliente->rowCount()==1){
+                $alerta=[
+                    "Alerta"=>"recargar",
+                    "Titulo"=>"Estudiante eliminado",
+                    "Texto"=>"El estudiante ha sido eliminado del sistema",
+                    "Tipo"=>"success"
+                ];
+                echo json_encode($alerta);
+            }else{
+                $alerta=[
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrido un error inesperado",
+                    "Texto"=>"No se ha podido eliminar el estudiante, por favor intente nuevamente",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+            }
     }
-    //Listar clientes
+        /* fin controlador */
+
+    /*--------- Datos cliente controlador ----------*/
+        public function datos_cliente_controlador($tipo,$id){
+            $tipo=mainModel::limpiar_cadena($tipo);
+            $id=mainModel::decryption($id);
+            $id=mainModel::limpiar_cadena($id);
+            return clienteModelo::datos_cliente_modelo($tipo,$id);
+        } /* fin controlador */ 
+
+        /*--------- Actualizar cliente controlador ----------*/
+        public function actualizar_cliente_controlador(){
+            // Recuperar datos del cliente
+            $id = mainModel::decryption($_POST['cliente_id_up']);
+            $id = mainModel::limpiar_cadena($id);
+            // comprobar cliente en bd
+            $check_cliente = mainModel::ejecutar_consulta_simple("SELECT * FROM cliente WHERE cliente_id='$id'");
+            if($check_cliente->rowCount()<=0){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrió un error inesperado",
+                    "Texto"=>"El estudiante que intenta actualizar no existe en el sistema",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }else{
+                $campos = $check_cliente->fetch();
+            }
+
+            $dni = mainModel::limpiar_cadena($_POST['cliente_dni_up']);
+            $nombre = mainModel::limpiar_cadena($_POST['cliente_nombre_up']);
+            $apellido = mainModel::limpiar_cadena($_POST['cliente_apellido_up']);
+            $telefono = mainModel::limpiar_cadena($_POST['cliente_telefono_up']);
+            $direccion = mainModel::limpiar_cadena($_POST['cliente_direccion_up']);
+            $ficha = mainModel::limpiar_cadena($_POST['cliente_ficha_up']);
+            $programa = mainModel::limpiar_cadena($_POST['cliente_programa_up']);
+
+            //verificar campos vacios
+            if($dni=="" || $nombre=="" || $apellido=="" || $telefono=="" || $direccion=="" || $ficha=="" || $programa==""){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrió un error inesperado",
+                    "Texto"=>"No has llenado todos los campos que son obligatorios",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            //verificar integridad de los datos
+            if(mainModel::verificar_datos("[0-9-]{1,27}",$dni)){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrió un error inesperado",
+                    "Texto"=>"El # de CC no coincide con el formato solicitado",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            if(mainModel::verificar_datos("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{1,40}",$nombre)){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrió un error inesperado",
+                    "Texto"=>"El nombre no coincide con el formato solicitado",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            if(mainModel::verificar_datos("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{1,40}",$apellido)){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrido un error inesperado",
+                    "Texto"=>"El apellido no coincide con el formato solicitado",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            if(mainModel::verificar_datos("[0-9()+]{8,20}",$telefono)){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrido un error inesperado",
+                    "Texto"=>"El telefono no coincide con el formato solicitado",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            if(mainModel::verificar_datos("[a-zA-Z0-9 ]{1,100}",$direccion)){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrido un error inesperado",
+                    "Texto"=>"La direccion no coincide con el formato solicitado",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            if($ficha!=""){
+                if(mainModel::verificar_datos("[0-9-]{1,20}",$ficha)){
+                    $alerta = [
+                        "Alerta"=>"simple",
+                        "Titulo"=>"Ocurrido un error inesperado",
+                        "Texto"=>"La ficha no coincide con el formato solicitado",
+                        "Tipo"=>"error"
+                    ];
+                    echo json_encode($alerta);
+                    exit();
+                }
+            }
+            if($programa!=""){
+                if(mainModel::verificar_datos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,100}",$programa)){
+                    $alerta = [
+                        "Alerta"=>"simple",
+                        "Titulo"=>"Ocurrido un error inesperado",
+                        "Texto"=>"El programa académico no coincide con el formato solicitado",
+                        "Tipo"=>"error"
+                    ];
+                    echo json_encode($alerta);
+                    exit();
+                }
+            }
+            //Comprobar DNI
+            if($dni!=$campos['cliente_dni']){ //si el dni es diferente al que ya esta registrado
+                $check_dni = mainModel::ejecutar_consulta_simple("SELECT cliente_dni FROM cliente WHERE cliente_dni='$dni'");
+                if($check_dni->rowCount()>0){
+                $alerta = [
+                "Alerta"=>"simple",
+                "Titulo"=>"Ocurrió un error inesperado",
+                "Texto"=>"El # de CC ya se encuentra registrado en el sistema",
+                "Tipo"=>"error"
+                ];
+            echo json_encode($alerta);
+            exit();
+            }
+
+            }
+            //Comrtrolar privilegios
+            session_start(['name'=>'SPM']);
+            if($_SESSION['privilegio_spm']<1 || $_SESSION['privilegio_spm']>2){
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrió un error inesperado",
+                    "Texto"=>"No tienes los permisos necesarios para actualizar este estudiante",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+            $datos_cliente_up = [
+                "DNI"=>$dni,
+                "NOMBRE"=>$nombre,
+                "APELLIDO"=>$apellido,
+                "TELEFONO"=>$telefono,
+                "DIRECCION"=>$direccion
+                ,"FICHA"=>$ficha,
+                "PROGRAMA"=>$programa,
+                "ID"=>$id
+            ];
+            if(clienteModelo::actualizar_cliente_modelo($datos_cliente_up)){
+                $alerta = [
+                    "Alerta"=>"recargar",
+                    "Titulo"=>"Datos actualizados",
+                    "Texto"=>"Los datos del estudiante se actualizaron con éxito",
+                    "Tipo"=>"success"
+                ];
+            }else{
+                $alerta = [
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrido un error inesperado",
+                    "Texto"=>"No se pudo actualizar los datos del estudiante, por favor intente nuevamente",
+                    "Tipo"=>"error"
+                ];
+            }
+            echo json_encode($alerta);
+        }
+        /* fin controlador */ 
+    }

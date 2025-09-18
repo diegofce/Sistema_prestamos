@@ -64,7 +64,7 @@
 					<div class="col-12 col-md-4">
 						<div class="form-group">
 							<label for="cliente_programa_academico" class="bmd-label-floating">Programa</label>
-							<input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{1,150}" class="form-control" name="cliente_programa_academico_reg" id="cliente_programa_academico" maxlength="150">
+							<input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{1,150}" class="form-control" name="cliente_programa_reg" id="cliente_programa_academico" maxlength="150">
 						</div>
 					</div>
 				</div>
