@@ -81,10 +81,14 @@
 						</li>
 					</ul>
 				</li>
-				<?php } ?>
+				<?php 
+					} 
+					if ($_SESSION['privilegio_spm'] == 1 || $_SESSION['privilegio_spm'] == 2) {
+				?>
 				<li>
 					<a href="<?php echo SERVERURL; ?>company/"><i class="fas fa-store-alt fa-fw"></i> &nbsp; SEDE SENA</a>
 				</li>
+				<?php } ?>
 			</ul>
 		</nav>
 	</div>

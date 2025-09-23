@@ -22,12 +22,17 @@
 			<p><?php echo $total_clientes->rowCount(); ?> Registrados</p>
 		</div>
 	</a>
-	
+
+	<?php
+		require_once "./controladores/itemControlador.php";
+		$ins_item = new itemControlador();
+		$total_items = $ins_item->datos_item_controlador("Conteo",0);
+	?>
 	<a href="<?php echo SERVERURL; ?>item-list/" class="tile">
 		<div class="tile-tittle">Items</div>
 		<div class="tile-icon">
 			<i class="fas fa-pallet fa-fw"></i>
-			<p>9 Registrados</p>
+			<p><?php echo $total_items->rowCount(); ?> Registrados</p>
 		</div>
 	</a>
 

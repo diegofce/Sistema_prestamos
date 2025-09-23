@@ -106,6 +106,4 @@
     <h4 class="alert-heading">¡Ocurrió un error inesperado!</h4>
     <p class="mb-0">Lo sentimos, no podemos mostrar la información solicitada debido a un error.</p>
 </div>
-<?php
-    }
-?>
+<?php } ?>

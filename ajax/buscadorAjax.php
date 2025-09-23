@@ -2,7 +2,7 @@
     session_start(['name'=>'SPM']);
     require_once "../config/APP.php";
 
-    if(isset($_POST['busqueda_inicial']) || isset($_POST['eliminar_busqueda']) || isset($_POST['fecha_inicio']) && isset($_POST['fecha_final'])){
+    if(isset($_POST['busqueda_inicial']) || isset($_POST['eliminar_busqueda']) || isset($_POST['fecha_inicio']) || isset($_POST['fecha_final'])){
 
         $data_url = [
             "usuario"=>"user-search",
@@ -68,7 +68,7 @@
                 if ($_POST['busqueda_inicial']==""){
                     $alerta=[
                         "Alerta"=>"simple",
-                        "Titulo"=>"Ocurrido un error inesperado",
+                        "Titulo"=>"Ocurrió un error inesperado",
                         "Texto"=>"Por favor ingrese un término de búsqueda",
                         "Tipo"=>"error"
                     ];

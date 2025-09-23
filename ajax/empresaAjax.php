@@ -1,14 +1,20 @@
 <?php
     $peticionAjax=true;
-    require_once "..config/APP.php";
-    if(isset($_POST['empresa_nombre_reg']) || isset($_POST['empresa_telefono_reg']) || isset($_POST['empresa_email_reg']) || isset($_POST['empresa_direccion_reg']) || isset($_POST['empresa_mision_reg']) || isset($_POST['empresa_vision_reg']) || isset($_POST['empresa_valores_reg'])){
+    require_once "../config/APP.php";
+
+    if(isset($_POST['empresa_nombre_reg']) || isset($_POST['empresa_id_up'])){
+
         /*--------- Instancia al controlador ----------*/
         require_once "../controladores/empresaControlador.php";
         $ins_empresa=new empresaControlador();
 
         /*--------- Agregar una empresa ----------*/
-        if(isset($_POST['empresa_nombre_reg']) && isset($_POST['empresa_telefono_reg']) && isset($_POST['empresa_email_reg']) && isset($_POST['empresa_direccion_reg']) && isset($_POST['empresa_mision_reg']) && isset($_POST['empresa_vision_reg']) && isset($_POST['empresa_valores_reg'])){
-           ;
+        if(isset($_POST['empresa_nombre_reg'])){
+            echo $ins_empresa->agregar_empresa_controlador();
+        } 
+        /*--------- Actualizar una empresa ----------*/
+        if(isset($_POST['empresa_id_up'])){
+            echo $ins_empresa->actualizar_empresa_controlador();
         }
     }
     else{
