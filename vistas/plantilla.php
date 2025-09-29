@@ -57,6 +57,7 @@ session_start(['name'=>'SPM']);
 		</script>
 	<?php
 		include "./vistas/inc/Script.php"; 
+
 	?>
 </body>
 </html>
