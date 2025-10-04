@@ -89,10 +89,39 @@
         document.querySelector('#id_agregar_item').setAttribute("value", id);
     }
 
+/*--------- Duracion prestamo */
+    document.addEventListener("DOMContentLoaded", function(){
+        const fechaInicio = document.getElementById("prestamo_fecha_inicio");
+        const horaInicio  = document.getElementById("prestamo_hora_inicio");
+        const fechaFin    = document.getElementById("prestamo_fecha_final");
+        const horaFin     = document.getElementById("prestamo_hora_final");
+        const inputTotal  = document.getElementById("prestamo_total");
+
+        function calcularDuracion(){
+            let datos = new FormData();
+            datos.append("prestamo_fecha_inicio_reg", fechaInicio.value);
+            datos.append("prestamo_hora_inicio_reg", horaInicio.value);
+            datos.append("prestamo_fecha_final_reg", fechaFin.value);
+            datos.append("prestamo_hora_final_reg", horaFin.value);
+            datos.append("accion", "calcular_duracion");
+
+            fetch("<?php echo SERVERURL; ?>ajax/prestamoAjax.php", {
+                method: "POST",
+                body: datos
+            })
+            .then(respuesta => respuesta.text())
+            .then(duracion => {
+                inputTotal.value = duracion; // actualizar campo
+            });
+        }
+
+        // Detectar cambios
+        fechaInicio.addEventListener("change", calcularDuracion);
+        horaInicio.addEventListener("change", calcularDuracion);
+        fechaFin.addEventListener("change", calcularDuracion);
+        horaFin.addEventListener("change", calcularDuracion);
+    });
 
 
-    function modal_buscar_item(){
-        $('#ModalAgregarItem').modal('hide');
-        $('#ModalItem').modal('show');
-    }
+
 </script>

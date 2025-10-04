@@ -53,8 +53,9 @@
 							<a href="<?php echo SERVERURL; ?>reservation-new/"><i class="fas fa-plus fa-fw"></i> &nbsp; Nuevo préstamo</a>
 						</li>
 						<li>
-							<a href="<?php echo SERVERURL; ?>reservation-reservation/"><i class="far fa-calendar-alt fa-fw"></i> &nbsp; Reservaciones</a>
+							<a href="<?php echo SERVERURL; ?>reservation/"><i class="far fa-calendar-alt fa-fw"></i> &nbsp; Reservaciones</a>
 						</li>
+
 						<li>
 							<a href="<?php echo SERVERURL; ?>reservation-pending/"><i class="fas fa-solid fa-handshake fa-fw"></i> &nbsp; Préstamos</a>
 						</li>

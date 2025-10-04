@@ -48,69 +48,153 @@
                         <tr class="text-center roboto-medium">
                             <th>ITEM</th>
                             <th>CANTIDAD</th>
-                            <th>TIEMPO</th>
-                            <th>COSTO</th>
-                            <th>SUBTOTAL</th>
+                            <th>FORMATO</th>
+                            <th>CANTIDAD DE TIEMPO</th>
+                            <th>OBSERVACIÓN</th>
                             <th>DETALLE</th>
                             <th>ELIMINAR</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="text-center" >
-                            <td>Silla plastica</td>
-                            <td>7</td>
-                            <td>Hora</td>
-                            <td>$5.00</td>
-                            <td>$35.00</td>
+                        <tbody>
+                        <?php 
+                            if(isset($_SESSION['datos_item']) && count($_SESSION['datos_item'])>=1){
+                                $total_items = 0;
+                                $total_dias = 0;
+                                foreach($_SESSION['datos_item'] as $items){
+                                    $total_items += $items['Cantidad'];
+                                    $total_dias += $items['Tiempo'];
+                        ?>
+                        <tr class="text-center">
+                            <td><?php echo $items['Nombre']; ?></td>
+                            <td><?php echo $items['Cantidad']; ?></td>
+                            <td><?php echo $items['Formato']; ?></td>
+                            <td><?php echo $items['Tiempo']; ?></td> 
+                            <td><?php echo $items['Costo']; ?></td> 
                             <td>
-                                <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover" title="Nombre del item" data-content="Detalle completo del item">
+                                <button type="button" class="btn btn-info" 
+                                        data-toggle="popover" data-trigger="hover" 
+                                        title="Detalle del item" 
+                                        data-content="Código: <?php echo $items['Codigo']; ?>">
                                     <i class="fas fa-info-circle"></i>
                                 </button>
                             </td>
-                            <td><button type="button" class="btn btn-warning"><i class="far fa-trash-alt"></i></button></td>
-                        </tr>
-                        <tr class="text-center" >
-                            <td>Silla metalica</td>
-                            <td>9</td>
-                            <td>Día</td>
-                            <td>$5.00</td>
-                            <td>$45.00</td>
                             <td>
-                                <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover" title="Nombre del item" data-content="Detalle completo del item">
-                                    <i class="fas fa-info-circle"></i>
+                                <form class="FormularioAjax" action="<?php echo SERVERURL; ?>ajax/prestamoAjax.php" method="POST" data-form="loans" autocomplete="off">
+                                    <input type="hidden" name="id_eliminar_item" value="<?php echo $items['ID']; ?>">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="far fa-trash-alt"></i>
                                 </button>
+                                </form>
                             </td>
-                            <td><button type="button" class="btn btn-warning"><i class="far fa-trash-alt"></i></button></td>
                         </tr>
-                        <tr class="text-center" >
-                            <td>Mesa plastica</td>
-                            <td>5</td>
-                            <td>Evento</td>
-                            <td>$10.00</td>
-                            <td>$50.00</td>
-                            <td>
-                                <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover" title="Nombre del item" data-content="Detalle completo del item">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                            </td>
-                            <td><button type="button" class="btn btn-warning"><i class="far fa-trash-alt"></i></button></td>
-                        </tr>
+                        <?php 
+                                }
+                        ?>
                         <tr class="text-center bg-light">
                             <td><strong>TOTAL</strong></td>
-                            <td><strong>21 items</strong></td>
-                            <td colspan="2"></td>
-                            <td><strong>$130.00</strong></td>
-                            <td colspan="2"></td>
+                            <td><strong><?php echo $total_items; ?> items</strong><td colspan="5"></td></td>
                         </tr>
+                        <?php 
+                            }else{
+                                $total_dias = 0;
+                        ?>
+                        <tr class="text-center">
+                            <td colspan="7">No hay items agregados</td>
+                        </tr>
+                        <?php 
+                            }
+                        ?>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <!-- formulario -->
-        <form action="" autocomplete="off">
-            <!-- tus fieldsets de fechas y demás (no los cambio) -->
-            ...
+        <form class="FormularioAjax" action="<?php echo SERVERURL; ?>ajax/prestamoAjax.php" method="POST" data-form="save" autocomplete="off">
+            <fieldset>
+                <legend><i class="far fa-clock"></i> &nbsp; Fecha y hora de préstamo</legend>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="prestamo_fecha_inicio">Fecha de préstamo</label>
+                                <input type="date" class="form-control" name="prestamo_fecha_inicio_reg" value="<?php echo date("Y-m-d"); ?>" id="prestamo_fecha_inicio">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="prestamo_hora_inicio">Hora de préstamo</label>
+                                <input type="time" class="form-control" name="prestamo_hora_inicio_reg" value="<?php echo date("H:i"); ?>" id="prestamo_hora_inicio">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend><i class="fas fa-history"></i> &nbsp; Fecha y hora de entrega</legend>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="prestamo_fecha_final">Fecha de entrega</label>
+                                <input type="date" class="form-control" name="prestamo_fecha_final_reg" id="prestamo_fecha_final">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="prestamo_hora_final">Hora de entrega</label>
+                                <input type="time" class="form-control" name="prestamo_hora_final_reg" id="prestamo_hora_final">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+			<fieldset>
+				<legend><i class="fas fa-cubes"></i> &nbsp; Otros datos</legend>
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-12 col-md-4">
+                            <div class="form-group">
+                                <label for="prestamo_estado" class="bmd-label-floating">Estado</label>
+                                <select class="form-control" name="prestamo_estado_reg" id="prestamo_estado">
+                                    <option value="" selected="" >Seleccione una opción</option>
+                                    <option value="Reservacion">Reservación</option>
+                                    <option value="Prestamo">Préstamo</option>
+                                    <option value="Finalizado">Finalizado</option>
+                                </select>
+                            </div>
+                        </div>
+						<div class="col-12 col-md-4">
+                        <div class="form-group">
+                            <label for="prestamo_total" class="bmd-label-floating">Duración del préstamo</label>
+                            <input type="text" class="form-control" readonly
+                            value="" name="prestamo_total"
+                            id="prestamo_total">
+
+                             </div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <div class="form-group">
+                                <label for="prestamo_pagado" class="bmd-label-floating">Total depositado en $</label>
+                                <input type="text" pattern="[0-9.]{1,10}" class="form-control" name="prestamo_pagado_reg" id="prestamo_pagado" maxlength="10">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="prestamo_observacion" class="bmd-label-floating">Observación</label>
+                                <input type="text" pattern="[a-zA-z0-9áéíóúÁÉÍÓÚñÑ#() ]{1,400}" class="form-control" name="prestamo_observacion_reg" id="prestamo_observacion" maxlength="400">
+                            </div>
+                        </div>
+					</div>
+				</div>
+			</fieldset>
+			<br><br><br>
+			<p class="text-center" style="margin-top: 40px;">
+				<button type="reset" class="btn btn-raised btn-secondary btn-sm"><i class="fas fa-paint-roller"></i> &nbsp; LIMPIAR</button>
+				&nbsp; &nbsp;
+				<button type="submit" class="btn btn-raised btn-info btn-sm"><i class="far fa-save"></i> &nbsp; GUARDAR</button>
+			</p>
         </form>
 	</div>
 </div>
@@ -120,12 +204,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ModalClienteLabel">Agregar cliente</h5>
+                <h5 class="modal-title" id="ModalClienteLabel">Agregar USUARIO</h5>
                 <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="input_cliente" class="bmd-label-floating">DNI, Nombre, Apellido, Teléfono</label>
+                    <label for="input_cliente" class="bmd-label-floating">CC, Nombre, Apellido, Teléfono</label>
                     <input type="text" class="form-control" name="input_cliente" id="input_cliente" maxlength="30">
                 </div>
                 <div id="tabla_clientes"></div>
@@ -164,12 +248,12 @@
 <!-- MODAL AGREGAR ITEM -->
 <div class="modal fade" id="ModalAgregarItem" tabindex="-1" role="dialog" aria-labelledby="ModalAgregarItemLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form class="modal-content FormularioAjax">
+        <form class="modal-content FormularioAjax" action="<?php echo SERVERURL; ?>ajax/prestamoAjax.php" method="POST" data-form="default" autocomplete="off">
             
             <!-- HEADER -->
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalAgregarItemLabel">
-                    Selecciona el formato, cantidad, tiempo y costo
+                    Selecciona el formato, cantidad, tiempo y observación.
                 </h5>
                 <button type="button" class="close" data-dismiss="modal">
                     <span>&times;</span>
@@ -217,9 +301,9 @@
                         <!-- Costo -->
                         <div class="col-12 col-md-4">
                             <div class="form-group">
-                                <label for="detalle_costo_tiempo" class="bmd-label-floating">Costo por unidad de tiempo</label>
-                                <input type="text" pattern="[0-9.]{1,15}" class="form-control"
-                                       name="detalle_costo_tiempo" id="detalle_costo_tiempo" maxlength="15" required>
+                                <label for="detalle_costo" class="bmd-label-floating">Observación</label>
+                                <input type="text" pattern="[a-zA-ZáéíóúÁÉÍÓÚ ]{1,15}" class="form-control"
+                                       name="detalle_costo" id="detalle_costo" maxlength="15" required>
                             </div>
                         </div>
 

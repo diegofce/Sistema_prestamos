@@ -35,12 +35,21 @@
 			<p><?php echo $total_items->rowCount(); ?> Registrados</p>
 		</div>
 	</a>
+	<?php
+		require_once "./controladores/prestamoControlador.php";
+		$ins_prestamo = new prestamoControlador();
 
+		$total_prestamos = $ins_prestamo->datos_prestamo_controlador("Conteo_Prestamos",0);
+
+		$total_reservaciones = $ins_prestamo->datos_prestamo_controlador("Conteo_Reservacion",0);
+
+		$total_finalizados = $ins_prestamo->datos_prestamo_controlador("Conteo_Finalizado",0);
+	?>
 	<a href="<?php echo SERVERURL; ?>reservation-reservation/" class="tile">
 		<div class="tile-tittle">Reserv. Salas</div>
 		<div class="tile-icon">
 			<i class="far fa-calendar-alt fa-fw"></i>
-			<p>30 Registradas</p>
+			<p><?php echo $total_reservaciones->rowCount(); ?> Registradas</p>
 		</div>
 	</a>
 
@@ -48,7 +57,7 @@
 		<div class="tile-tittle">Presta. Material</div>
 		<div class="tile-icon">
 			<i class="fas fa-box fa-fw"></i>
-			<p>200 Registrados</p>
+			<p><?php echo $total_prestamos->rowCount(); ?> Registrados</p>
 		</div>
 	</a>
 
@@ -56,7 +65,7 @@
 		<div class="tile-tittle">Finalizados</div>
 		<div class="tile-icon">
 			<i class="fas fa-clipboard-list fa-fw"></i>
-			<p>700 Registrados</p>
+			<p><?php echo $total_finalizados->rowCount(); ?> Registrados</p>
 		</div>
 	</a>
 	<?php 
