@@ -727,7 +727,8 @@
                                         $tabla.='<td>Pendiente: <span class="badge badge-danger">'.MODENA.number_format(($rows['prestamo_total']-$rows['prestamo_pagado']),2,'.',',').'</span></td>';
 
                                     }else{
-                                        $tabla.='<td><span class="badge badge-light">Cancelado</span></td>';
+                                        $estado_visual = $rows['prestamo_estado'];
+                                        $tabla .= '<td><span class="badge badge-info">'.$estado_visual.'</span></td>';
                                     }
                                     $tabla.='
                                         <td>
@@ -757,7 +758,7 @@
                                     if($privilegios==1){
                                         $tabla.='
                                         <td>
-                                            <form class="FormularioAjax" action="'.SERVER.'ajax/prestamoAjax.php" method="POST" data-form="delete" autocomplete="off">
+                                            <form class="FormularioAjax" action="'.SERVERURL.'ajax/prestamoAjax.php" method="POST" data-form="delete" autocomplete="off">
                                                 <input type="hidden" name="prestamo_codigo_del" value="'.mainModel::encryption($rows['prestamo_codigo']).'">
                                                 <button type="submit" class="btn btn-warning">
                                                     <i class="fas fa-trash-alt"></i>
@@ -794,12 +795,96 @@
                     </tbody></table></div>';
 
                     if($total>=1 && $pagina<=$Npaginas){
-                        $reg_inicio = $inicio + 0;
-                        $tabla.='<p class="text-right">Mostrando prestamos '.$reg_inicio.' al '.$reg_final.' de un total de '.$total.'</p>';
+                        // índices reales que estamos mostrando en la tabla
+                        $reg_inicio = $inicio + 1;
+                        $reg_final = $inicio + count($datos);
 
-                        $tabla.=mainModel::paginador_tablas($pagina, $Npaginas, $url, 7);
+                        $tabla.='<p class="text-right">Mostrando prestamos '.$reg_inicio.' al '.$reg_final.' de un total de '.$total.'</p>';
+                        $tabla.= mainModel::paginador_tablas($pagina, $Npaginas, $url, 7);
                     }
                     return $tabla;
 
     }
+    /*----------- controlador eliminar prestamo  ----------*/
+    public function eliminar_prestamo_controlador(){
+        // Recibiendo el codigo
+        $codigo=mainModel::decryption($_POST['prestamo_codigo_del']);
+        $codigo=mainModel::limpiar_cadena($codigo);
+
+        /* Comprobar si el prestamo existe */
+        $check_prestamo=mainModel::ejecutar_consulta_simple("SELECT prestamo_codigo FROM prestamo WHERE prestamo_codigo='$codigo'");
+        if($check_prestamo->rowCount()<=0){
+            $alerta=[
+                "Alerta"=>"simple",
+                "Titulo"=>"Ocurrio un error inesperado",
+                "Texto"=>"El prestamo que intenta eliminar no existe en el sistema",
+                "Tipo"=>"error"
+            ];
+            echo json_encode($alerta);
+            exit();
+        }
+        // comprobar privilegios
+        session_start(['name'=>'SPM']);
+        if($_SESSION['privilegio_spm']!=1){
+            $alerta=[
+                "Alerta"=>"simple",
+                "Titulo"=>"Ocurrio un error inesperado",
+                "Texto"=>"No tienes los permisos necesarios para eliminar prestamos",
+                "Tipo"=>"error"
+            ];
+            echo json_encode($alerta);
+            exit();
+        }
+
+        // comprobando y eliminando pagos 
+        $check_pagos=mainModel::ejecutar_consulta_simple("SELECT prestamo_codigo FROM pago WHERE prestamo_codigo='$codigo'");
+        $check_pagos=$check_pagos->rowCount();
+        if($check_pagos>0){
+            $eliminar_pagos=prestamoModelo::eliminar_prestamo_modelo($codigo,"Pago");
+            if($eliminar_pagos->rowCount()!=$check_pagos){
+                $alerta=[
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrio un error inesperado",
+                    "Texto"=>"No hemos podido eliminar el prestamo, por favor intente nuevamente",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+        }
+        // eliminando detalles
+        $check_detalles=mainModel::ejecutar_consulta_simple("SELECT prestamo_codigo FROM detalle WHERE prestamo_codigo='$codigo'");
+        $check_detalles=$check_detalles->rowCount();
+        if($check_detalles>0){
+            $eliminar_detalles=prestamoModelo::eliminar_prestamo_modelo($codigo,"Detalle");
+            if($eliminar_detalles->rowCount()!=$check_detalles){
+                $alerta=[
+                    "Alerta"=>"simple",
+                    "Titulo"=>"Ocurrio un error inesperado",
+                    "Texto"=>"No hemos podido eliminar el prestamo, por favor intente nuevamente",
+                    "Tipo"=>"error"
+                ];
+                echo json_encode($alerta);
+                exit();
+            }
+        }
+        // eliminando prestamo
+        $eliminar_prestamo=prestamoModelo::eliminar_prestamo_modelo($codigo,"Prestamo");
+        if($eliminar_prestamo->rowCount()==1){
+            $alerta=[
+                "Alerta"=>"recargar",
+                "Titulo"=>"Prestamo eliminado",
+                "Texto"=>"El prestamo ha sido eliminado del sistema",
+                "Tipo"=>"success"
+            ];       
+        }else{
+            $alerta=[
+                "Alerta"=>"simple",
+                "Titulo"=>"ocurrio un error inesperado",
+                "Texto"=>"No hemos podido eliminar el prestamo, por favor intente nuevamente",
+                "Tipo"=>"error"
+            ];
+        }
+        echo json_encode($alerta);    
+    } // Fin controlador
 }

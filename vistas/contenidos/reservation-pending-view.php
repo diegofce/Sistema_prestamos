@@ -12,9 +12,7 @@
         <li>
             <a href="<?php echo SERVERURL; ?>reservation-new/"><i class="fas fa-plus fa-fw"></i> &nbsp; NUEVO PRÉSTAMO</a>
         </li>
-        <li>
-            <a href="<?php echo SERVERURL; ?>reservation-reservation/"><i class="far fa-calendar-alt"></i> &nbsp; RESERVACIONES</a>
-        </li>
+        
         <li>
             <a class="active" href="<?php echo SERVERURL; ?>reservation-pending/"><i class="fas fa-solid fa-handshake fa-fw"></i> &nbsp; PRÉSTAMOS</a>
         </li>
@@ -28,11 +26,28 @@
 </div>
 
 <div class="container-fluid">
+    <?php
+// Asegurarnos de que $pagina exista y definir valores por defecto
+        if (!isset($pagina) || !is_array($pagina)) {
+            // Si no se definió en plantilla, intentar obtenerlo desde GET
+            $pagina = isset($_GET['views']) ? explode("/", $_GET['views']) : ['reservation-pending'];
+        }
+
+        // URL de la vista (ej: "reservation-pending")
+        $pagina_url = isset($pagina[0]) ? $pagina[0] : 'reservation-pending';
+
+        // Página actual para la paginación (por defecto 1)
+        $pagina_actual = (isset($pagina[1]) && is_numeric($pagina[1]) && (int)$pagina[1] > 0) ? (int)$pagina[1] : 1;
+    ?>
+
 	
 	<?php 
 		require_once "./controladores/prestamoControlador.php";
 		$ins_prestamo = new prestamoControlador();
 
-		echo $ins_prestamo->paginador_prestamos_controlador($pagina[1],15,$_SESSION['privilegio_spm'],$pagina[0],"Prestamo","","");
+		
+        echo $ins_prestamo->paginador_prestamos_controlador($pagina_actual, 15, $_SESSION['privilegio_spm'], $pagina_url, "Prestamo", "", "");
+
+
 	?>
 </div>

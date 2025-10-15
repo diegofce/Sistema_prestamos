@@ -11,7 +11,7 @@ if(isset($_POST['accion']) && $_POST['accion']=="calcular_duracion"){
 }
 
 /*--------- Otras acciones ----------*/
-if(isset($_POST['buscar_cliente']) || isset($_POST['id_agregar_cliente']) || isset($_POST['id_eliminar_cliente']) || isset($_POST['buscar_item']) || isset($_POST['id_agregar_item']) || isset($_POST['id_eliminar_item']) || isset($_POST['prestamo_fecha_inicio_reg']) ){
+if(isset($_POST['buscar_cliente']) || isset($_POST['id_agregar_cliente']) || isset($_POST['id_eliminar_cliente']) || isset($_POST['buscar_item']) || isset($_POST['id_agregar_item']) || isset($_POST['id_eliminar_item']) || isset($_POST['prestamo_fecha_inicio_reg']) || isset($_POST['prestamo_codigo_del']) ){
 
     require_once "../controladores/prestamoControlador.php";
     $ins_prestamo = new prestamoControlador();
@@ -43,6 +43,10 @@ if(isset($_POST['buscar_cliente']) || isset($_POST['id_agregar_cliente']) || iss
     /*agregar fecha inicio prestamo*/
     if(isset($_POST['prestamo_fecha_inicio_reg'])) {
         echo $ins_prestamo->agregar_prestamo_controlador();
+    }
+    /*eliminar prestamo*/
+    if(isset($_POST['prestamo_codigo_del'])) {
+        echo $ins_prestamo->eliminar_prestamo_controlador();
     }
 
 }else{
